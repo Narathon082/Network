@@ -101,32 +101,29 @@ def background_monitor_worker():
                         'true_label': row['label']
                     })
                 
-                # Run AI Prediction
+                # Run Hybrid Ensemble AI Prediction
                 if detector_loaded:
                     temp_df = pd.DataFrame(flows_list)
-                    preds, scores = detector.predict(temp_df)
-                    
+                    res = detector.predict(temp_df)
+                    if len(res) == 4:
+                        preds, scores, clf_preds, clf_probs = res
+                    else:
+                        preds, scores = res
+                        clf_preds = [flow['true_label'] for flow in flows_list]
+
                     for i, flow in enumerate(flows_list):
                         flow['score'] = round(float(scores[i]), 3)
                         flow['is_anomaly'] = int(preds[i]) == -1
+                        flow['clf_label'] = str(clf_preds[i])
                         
-                        if flow['is_anomaly'] and flow['true_label'] != 'normal':
+                        if flow['is_anomaly']:
+                            attack_type = flow['clf_label'].upper() if flow['clf_label'] != 'normal' else "HYBRID ANOMALY"
                             alert = {
                                 'timestamp': datetime.now().strftime("%H:%M:%S"),
                                 'ip': flow['ip'],
-                                'type': flow['true_label'].upper(),
+                                'type': attack_type,
                                 'score': flow['score'],
-                                'details': f"Packets: {flow['packet_count']}, Bytes: {flow['byte_count']}, Avg Size: {flow['avg_packet_size']} B"
-                            }
-                            if not any(a['ip'] == alert['ip'] and a['type'] == alert['type'] for a in alerts_log[:3]):
-                                alerts_log.insert(0, alert)
-                        elif flow['is_anomaly'] and flow['true_label'] == 'normal':
-                            alert = {
-                                'timestamp': datetime.now().strftime("%H:%M:%S"),
-                                'ip': flow['ip'],
-                                'type': "FALSE ALARM (NORMAL)",
-                                'score': flow['score'],
-                                'details': f"Packets: {flow['packet_count']}, Bytes: {flow['byte_count']}, Avg Size: {flow['avg_packet_size']} B"
+                                'details': f"Hybrid Model Score: {abs(flow['score']):.3f} | Packets: {flow['packet_count']}, Bytes: {flow['byte_count']}, Avg Size: {flow['avg_packet_size']} B"
                             }
                             if not any(a['ip'] == alert['ip'] and a['type'] == alert['type'] for a in alerts_log[:3]):
                                 alerts_log.insert(0, alert)
@@ -185,10 +182,17 @@ def background_monitor_worker():
                     df_features = live_monitor.extract_features()
                     if not df_features.empty:
                         if detector_loaded:
-                            preds, scores = detector.predict(df_features)
+                            res = detector.predict(df_features)
+                            if len(res) == 4:
+                                preds, scores, clf_preds, clf_probs = res
+                            else:
+                                preds, scores = res
+                                clf_preds = ["SUSPICIOUS BEHAVIOR" for _ in range(len(preds))]
+                                
                             for idx, row in df_features.iterrows():
                                 score = float(scores[idx])
                                 is_anomaly = int(preds[idx]) == -1
+                                clf_label = str(clf_preds[idx])
                                 flow = {
                                     'ip': row['src_ip'],
                                     'packet_count': int(row['packet_count']),
@@ -199,17 +203,19 @@ def background_monitor_worker():
                                     'tcp_ratio': round(float(row['tcp_ratio']), 2),
                                     'udp_ratio': round(float(row['udp_ratio']), 2),
                                     'score': round(score, 3),
-                                    'is_anomaly': is_anomaly
+                                    'is_anomaly': is_anomaly,
+                                    'clf_label': clf_label
                                 }
                                 flows_list.append(flow)
                                 
                                 if is_anomaly:
+                                    attack_type = clf_label.upper() if clf_label != 'normal' else "SUSPICIOUS BEHAVIOR"
                                     alert = {
                                         'timestamp': datetime.now().strftime("%H:%M:%S"),
                                         'ip': flow['ip'],
-                                        'type': "SUSPICIOUS BEHAVIOR",
+                                        'type': attack_type,
                                         'score': flow['score'],
-                                        'details': f"Packets: {flow['packet_count']}, Bytes: {flow['byte_count']}, Avg Size: {flow['avg_packet_size']} B"
+                                        'details': f"Hybrid Score: {abs(flow['score']):.3f} | Packets: {flow['packet_count']}, Bytes: {flow['byte_count']}, Avg Size: {flow['avg_packet_size']} B"
                                     }
                                     if not any(a['ip'] == alert['ip'] and a['timestamp'] == alert['timestamp'] for a in alerts_log[:3]):
                                         alerts_log.insert(0, alert)
@@ -378,8 +384,7 @@ def update_xdr_config():
 
 @app.route('/api/xdr/clear_incidents', methods=['POST'])
 def clear_xdr_incidents():
-    with xdr_engine.store.lock:
-        xdr_engine.store.incidents = []
+    xdr_engine.clear_all()
     return jsonify({'status': 'success'})
 
 if __name__ == '__main__':

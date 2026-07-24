@@ -72,6 +72,24 @@ class XDREngine:
             details=f"XDR Engine switched to {mode_str}."
         )
 
+    def clear_all(self):
+        with self.store.lock:
+            self.store.incidents = []
+            self.store.quarantined_hosts = set()
+            self.store.blocked_ips = set()
+            self.store.terminated_pids = set()
+            self.store.stats['total_incidents'] = 0
+            self.store.stats['threats_mitigated'] = 0
+            self.store.stats['active_quarantines'] = 0
+            self.store.stats['auto_actions_taken'] = 0
+        self.log_response_action(
+            action_type="CLEAR_INCIDENTS",
+            target="XDR Engine Queue",
+            status="CLEARED",
+            trigger="Manual SOC Action",
+            details="Cleared all active incidents, quarantines, and blocked target sets."
+        )
+
     def isolate_host(self, ip_or_hostname, trigger="Manual SOC Action"):
         with self.store.lock:
             self.store.quarantined_hosts.add(ip_or_hostname)
