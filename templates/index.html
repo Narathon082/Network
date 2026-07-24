@@ -3,16 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ANTIGRAVITY SHIELD - AI Network Security Monitor</title>
+    <title>ANTIGRAVITY XDR SHIELD - Extended Detection & Response Platform</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #040814;
-            --panel-bg: rgba(13, 20, 38, 0.65);
+            --bg-color: #030712;
+            --panel-bg: rgba(15, 23, 42, 0.7);
             --panel-border: rgba(255, 255, 255, 0.08);
             --accent-cyan: #06b6d4;
             --accent-blue: #3b82f6;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
             --accent-red: #ef4444;
             --accent-yellow: #f59e0b;
             --accent-green: #10b981;
@@ -31,9 +33,9 @@
         body {
             background-color: var(--bg-color);
             background-image: 
-                radial-gradient(at 0% 0%, rgba(30, 41, 150, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.1) 0px, transparent 50%),
-                radial-gradient(at 50% 0%, rgba(239, 68, 68, 0.04) 0px, transparent 50%);
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.12) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(239, 68, 68, 0.08) 0px, transparent 50%);
             color: var(--text-main);
             font-family: var(--font-sans);
             min-height: 100vh;
@@ -45,10 +47,10 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 1.5rem 2.5rem;
+            padding: 1.2rem 2.5rem;
             border-bottom: 1px solid var(--panel-border);
-            background: rgba(4, 8, 20, 0.8);
-            backdrop-filter: blur(10px);
+            background: rgba(3, 7, 18, 0.85);
+            backdrop-filter: blur(16px);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -57,32 +59,58 @@
         .logo-area {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.85rem;
         }
 
         .logo-icon {
-            width: 2.2rem;
-            height: 2.2rem;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
-            border-radius: 0.5rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            border-radius: 0.6rem;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 800;
             font-family: var(--font-display);
-            color: #040814;
-            box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+            color: #030712;
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.4);
+            font-size: 1.1rem;
         }
 
         .logo-text {
             font-family: var(--font-display);
-            font-weight: 700;
+            font-weight: 800;
             font-size: 1.4rem;
             letter-spacing: 1px;
-            background: linear-gradient(to right, var(--text-main), #cbd5e1);
+            background: linear-gradient(to right, #ffffff, var(--accent-cyan), var(--accent-purple));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+
+        .vector-badges {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .vector-pill {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .vector-pill.net { color: var(--accent-cyan); border-color: rgba(6, 182, 212, 0.3); }
+        .vector-pill.ep { color: var(--accent-purple); border-color: rgba(168, 85, 247, 0.3); }
+        .vector-pill.id { color: var(--accent-yellow); border-color: rgba(245, 158, 11, 0.3); }
+        .vector-pill.soar { color: var(--accent-green); border-color: rgba(16, 185, 129, 0.3); }
 
         .shield-status-pill {
             display: flex;
@@ -91,26 +119,41 @@
             background: rgba(16, 185, 129, 0.1);
             border: 1px solid rgba(16, 185, 129, 0.2);
             color: var(--accent-green);
-            padding: 0.5rem 1rem;
+            padding: 0.5rem 1.2rem;
             border-radius: 9999px;
             font-size: 0.85rem;
-            font-weight: 600;
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.05);
+            font-weight: 700;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
         }
 
         .shield-status-pill.threatened {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.2);
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
             color: var(--accent-red);
-            box-shadow: 0 0 15px rgba(239, 68, 68, 0.15);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.25);
             animation: pulse-border 1.5s infinite;
         }
 
-        .shield-status-pill.paused {
-            background: rgba(148, 163, 184, 0.1);
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            color: var(--text-muted);
-            box-shadow: none;
+        .lang-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--text-main);
+            padding: 0.4rem 0.85rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+        }
+
+        .lang-btn:hover {
+            background: rgba(6, 182, 212, 0.15);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
         }
 
         .pulse-dot {
@@ -123,40 +166,37 @@
         }
 
         main {
-            max-width: 1600px;
-            margin: 2rem auto;
-            padding: 0 2rem;
+            max-width: 1700px;
+            margin: 1.5rem auto;
+            padding: 0 1.5rem;
             display: grid;
             grid-template-columns: 320px 1fr;
-            gap: 2rem;
+            gap: 1.5rem;
         }
 
-        /* Glassmorphism Panel base */
         .glass-panel {
             background: var(--panel-bg);
             border: 1px solid var(--panel-border);
             border-radius: 1rem;
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            padding: 1.5rem;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            padding: 1.25rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
         }
 
-        /* Sidebar styling */
         .sidebar {
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
-            height: fit-content;
+            gap: 1.25rem;
         }
 
         .panel-title {
             font-family: var(--font-display);
-            font-size: 1.1rem;
-            font-weight: 600;
+            font-size: 1.05rem;
+            font-weight: 700;
             margin-bottom: 1rem;
             color: var(--text-main);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
             padding-bottom: 0.5rem;
             display: flex;
             align-items: center;
@@ -166,7 +206,7 @@
         .control-group {
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
+            gap: 0.65rem;
         }
 
         .btn-mode {
@@ -174,14 +214,14 @@
             background: rgba(255,255,255,0.03);
             border: 1px solid rgba(255,255,255,0.08);
             color: var(--text-muted);
-            padding: 0.85rem 1rem;
+            padding: 0.75rem 1rem;
             border-radius: 0.6rem;
             cursor: pointer;
             text-align: left;
             font-family: var(--font-sans);
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.25s ease;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -193,7 +233,7 @@
         }
 
         .btn-mode.active {
-            background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(59, 130, 246, 0.15));
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(168, 85, 247, 0.15));
             border-color: var(--accent-cyan);
             color: var(--accent-cyan);
             box-shadow: 0 0 15px rgba(6, 182, 212, 0.15);
@@ -203,14 +243,14 @@
             width: 100%;
             background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
             border: none;
-            color: #040814;
-            padding: 0.9rem;
+            color: #030712;
+            padding: 0.8rem;
             border-radius: 0.6rem;
             cursor: pointer;
             font-family: var(--font-display);
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.25s ease;
             text-align: center;
             box-shadow: 0 4px 15px rgba(6, 182, 212, 0.25);
         }
@@ -220,98 +260,90 @@
             box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
         }
 
-        .btn-action.btn-paused {
-            background: linear-gradient(135deg, var(--accent-green), #059669);
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);
-            color: #ffffff;
-        }
-
-        .btn-action.btn-paused:hover {
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
-        }
-
-        .btn-secondary {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            color: var(--accent-red);
-            box-shadow: none;
-        }
-
-        .btn-secondary:hover {
-            background: rgba(239, 68, 68, 0.2);
-            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.15);
-        }
-
-        .status-box {
-            font-size: 0.85rem;
-            line-height: 1.5;
-        }
-
-        .status-item {
+        .toggle-switch-container {
             display: flex;
+            align-items: center;
             justify-content: space-between;
-            margin-bottom: 0.5rem;
-            border-bottom: 1px solid rgba(255,255,255,0.02);
-            padding-bottom: 0.4rem;
-        }
-
-        .status-value {
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 0.6rem;
+            font-size: 0.85rem;
             font-weight: 600;
         }
 
-        .status-value.green { color: var(--accent-green); }
-        .status-value.cyan { color: var(--accent-cyan); }
-        .status-value.yellow { color: var(--accent-yellow); }
-
-        /* Progress Bar */
-        .progress-container {
-            margin-top: 0.5rem;
-            background: rgba(255,255,255,0.05);
-            border-radius: 999px;
-            height: 6px;
-            overflow: hidden;
-            display: none;
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
         }
 
-        .progress-bar {
-            background: linear-gradient(to right, var(--accent-cyan), var(--accent-blue));
-            height: 100%;
-            width: 0%;
-            border-radius: 999px;
-            transition: width 0.3s ease;
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
         }
 
-        /* Stats Grid */
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #334155;
+            transition: .3s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-green);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
         .dashboard-content {
             display: flex;
             flex-direction: column;
-            gap: 2rem;
+            gap: 1.5rem;
         }
 
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 1.5rem;
+            gap: 1.25rem;
         }
 
         .stat-card {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.4rem;
         }
 
         .stat-label {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 1px;
             color: var(--text-muted);
-            font-weight: 500;
+            font-weight: 600;
         }
 
         .stat-value {
             font-family: var(--font-display);
-            font-size: 2.2rem;
-            font-weight: 700;
+            font-size: 2.1rem;
+            font-weight: 800;
         }
 
         .stat-card.threat-card {
@@ -329,8 +361,8 @@
 
         .threat-status-large {
             font-family: var(--font-display);
-            font-size: 1.4rem;
-            font-weight: 700;
+            font-size: 1.3rem;
+            font-weight: 800;
             color: var(--accent-green);
             display: flex;
             align-items: center;
@@ -339,232 +371,187 @@
 
         .threatened .threat-status-large {
             color: var(--accent-red);
-            text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+            text-shadow: 0 0 12px rgba(239, 68, 68, 0.5);
         }
 
-        /* Data Section Layout */
-        .data-section {
-            display: grid;
-            grid-template-columns: 1.6fr 1fr;
-            gap: 2rem;
+        .tab-bar {
+            display: flex;
+            gap: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
         }
 
-        /* Table Styling */
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 0.4rem;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-main);
+            border-bottom: 2px solid var(--accent-cyan);
+        }
+
         .table-container {
             width: 100%;
             overflow-x: auto;
-            margin-top: 0.5rem;
+        }
+
+        .table-scrollable {
+            max-height: 360px;
+            overflow-y: auto;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             text-align: left;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
         }
 
         th {
             font-family: var(--font-display);
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-muted);
-            padding: 0.75rem 1rem;
+            padding: 0.7rem 0.85rem;
             border-bottom: 1px solid rgba(255,255,255,0.08);
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+            background: #0b1426;
+            z-index: 10;
         }
 
         td {
-            padding: 1rem;
+            padding: 0.85rem;
             border-bottom: 1px solid rgba(255,255,255,0.03);
             vertical-align: middle;
         }
 
         tr:hover td {
-            background: rgba(255,255,255,0.01);
+            background: rgba(255,255,255,0.02);
         }
 
-        tr.anomaly-row td {
-            background: rgba(239, 68, 68, 0.05);
-            border-bottom-color: rgba(239, 68, 68, 0.15);
-        }
-
-        tr.anomaly-row {
-            color: #fca5a5;
-        }
-
-        .badge {
+        .badge-sev {
             display: inline-block;
-            padding: 0.25rem 0.5rem;
+            padding: 0.2rem 0.5rem;
             border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
+            font-size: 0.7rem;
+            font-weight: 800;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .badge-normal {
-            background: rgba(16, 185, 129, 0.15);
-            color: var(--accent-green);
+        .sev-critical { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
+        .sev-high { background: rgba(245, 158, 11, 0.2); color: #fde047; border: 1px solid rgba(245, 158, 11, 0.4); }
+        .sev-medium { background: rgba(59, 130, 246, 0.2); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.4); }
+        .sev-low { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4); }
+
+        .btn-xs {
+            padding: 0.25rem 0.55rem;
+            font-size: 0.7rem;
+            border-radius: 0.35rem;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
         }
 
-        .badge-anomaly {
-            background: rgba(239, 68, 68, 0.2);
-            color: var(--accent-red);
-            box-shadow: 0 0 10px rgba(239, 68, 68, 0.1);
+        .btn-danger { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.3); }
+        .btn-danger:hover { background: rgba(239, 68, 68, 0.4); }
+
+        .btn-success { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .btn-success:hover { background: rgba(16, 185, 129, 0.4); }
+
+        .btn-info { background: rgba(6, 182, 212, 0.2); color: var(--accent-cyan); border: 1px solid rgba(6, 182, 212, 0.3); }
+        .btn-info:hover { background: rgba(6, 182, 212, 0.4); }
+
+        .data-section {
+            display: grid;
+            grid-template-columns: 1.6fr 1fr;
+            gap: 1.5rem;
         }
 
-        .ip-address {
-            font-family: monospace;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        /* Alert Panel Styling */
-        .alerts-panel {
+        .logs-panel {
+            max-height: 480px;
             display: flex;
             flex-direction: column;
-            max-height: 500px;
         }
 
-        .alerts-list {
+        .logs-list {
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
-            padding-right: 0.5rem;
+            gap: 0.6rem;
+            padding-right: 0.4rem;
         }
 
-        .alert-card {
+        .log-card {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            border-left: 4px solid var(--accent-red);
-            border-radius: 0.5rem;
-            padding: 0.75rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.4rem;
-            transition: all 0.2s ease;
+            border-left: 3px solid var(--accent-cyan);
+            border-radius: 0.4rem;
+            padding: 0.6rem 0.75rem;
+            font-size: 0.78rem;
         }
 
-        .alert-card.false-alarm {
-            border-left-color: var(--accent-yellow);
-        }
-
-        .alert-card:hover {
-            background: rgba(255, 255, 255, 0.04);
-            transform: translateX(3px);
-        }
-
-        .alert-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .alert-type {
-            font-family: var(--font-display);
-            font-weight: 700;
-            font-size: 0.85rem;
-            color: var(--accent-red);
-        }
-
-        .false-alarm .alert-type {
-            color: var(--accent-yellow);
-        }
-
-        .alert-time {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        .alert-ip {
-            font-family: monospace;
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        .alert-details {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        .alert-score {
-            font-size: 0.75rem;
-            font-weight: bold;
-            text-align: right;
-            color: var(--accent-red);
-        }
+        .log-card.soar-trigger { border-left-color: var(--accent-purple); }
+        .log-card.manual-action { border-left-color: var(--accent-yellow); }
 
         .no-data-msg {
             color: var(--text-muted);
             text-align: center;
-            padding: 3rem;
-            font-size: 0.9rem;
+            padding: 2.5rem;
+            font-size: 0.85rem;
         }
 
-        /* Scrollbar customizing */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.1);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.1);
-            border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(255,255,255,0.2);
+        .modal-backdrop {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
         }
 
-        /* Animations */
+        .modal-content {
+            background: #0f172a;
+            border: 1px solid var(--panel-border);
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 700px;
+            padding: 1.5rem;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+        }
+
         @keyframes pulse {
             0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.2); opacity: 0.7; }
+            50% { transform: scale(1.25); opacity: 0.7; }
             100% { transform: scale(1); opacity: 1; }
         }
 
         @keyframes pulse-border {
             0% { border-color: rgba(239, 68, 68, 0.2); }
-            50% { border-color: rgba(239, 68, 68, 0.6); box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
+            50% { border-color: rgba(239, 68, 68, 0.7); box-shadow: 0 0 15px rgba(239, 68, 68, 0.3); }
             100% { border-color: rgba(239, 68, 68, 0.2); }
         }
 
         @keyframes pulse-panel {
-            0% { box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); }
-            50% { box-shadow: 0 8px 32px 0 rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.4); }
-            100% { box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); }
-        }
-
-        /* Custom tooltips */
-        .tooltip {
-            position: relative;
-            cursor: help;
-        }
-        
-        .tooltip::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: 125%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(15, 23, 42, 0.95);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: #fff;
-            padding: 0.5rem 0.75rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.2s;
-            z-index: 10;
-        }
-
-        .tooltip:hover::after {
-            opacity: 1;
-            visibility: visible;
+            0% { box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4); }
+            50% { box-shadow: 0 8px 32px 0 rgba(239, 68, 68, 0.12); border-color: rgba(239, 68, 68, 0.4); }
+            100% { box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4); }
         }
     </style>
 </head>
@@ -572,12 +559,26 @@
 
     <header>
         <div class="logo-area">
-            <div class="logo-icon">AG</div>
-            <div class="logo-text">ANTIGRAVITY SHIELD</div>
+            <div class="logo-icon">XDR</div>
+            <div id="hdr-logo-text" class="logo-text">ANTIGRAVITY SHIELD XDR</div>
         </div>
-        <div id="status-pill" class="shield-status-pill">
-            <span class="pulse-dot"></span>
-            <span id="status-pill-text">SECURE BASELINE ACTIVE</span>
+
+        <div class="vector-badges">
+            <div class="vector-pill net"><span class="pulse-dot"></span> Network Vector</div>
+            <div class="vector-pill ep"><span class="pulse-dot"></span> Endpoint Vector</div>
+            <div class="vector-pill id"><span class="pulse-dot"></span> Identity Vector</div>
+            <div id="soar-pill" class="vector-pill soar"><span class="pulse-dot"></span> SOAR Active</div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap: 1rem;">
+            <button class="lang-btn" onclick="toggleLanguage()">
+                <span id="lang-flag">🇹🇭</span>
+                <span id="lang-label">TH / EN</span>
+            </button>
+            <div id="status-pill" class="shield-status-pill">
+                <span class="pulse-dot"></span>
+                <span id="status-pill-text">ALL VECTORS PROTECTED</span>
+            </div>
         </div>
     </header>
 
@@ -585,359 +586,712 @@
         <!-- Sidebar controls -->
         <div class="sidebar">
             <div class="glass-panel">
-                <h3 class="panel-title">System Controls</h3>
+                <h3 id="lbl-sys-mode" class="panel-title">System & AI Mode</h3>
                 <div class="control-group">
-                    <button id="btn-toggle-detect" class="btn-action" style="margin-bottom: 0.5rem; background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff;" onclick="toggleDetection()">
+                    <button id="btn-toggle-detect" class="btn-action" style="background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff;" onclick="toggleDetection()">
                         Pause Detection
                     </button>
                     <button id="btn-simulate" class="btn-mode active" onclick="setMode('simulate')">
-                        Simulation Mode <span>Active</span>
+                        <span id="lbl-sim-mode">Simulation Mode</span> <span id="lbl-sim-tag">Active</span>
                     </button>
                     <button id="btn-detect" class="btn-mode" onclick="setMode('detect')">
-                        Live Detection Mode <span id="live-driver-indicator">N/A</span>
+                        <span id="lbl-live-mode">Live Detection Mode</span> <span id="live-driver-indicator">N/A</span>
                     </button>
                     <button id="btn-train" class="btn-action" onclick="setMode('train')">
                         Train AI Baseline
                     </button>
-                    <div id="progress-container" class="progress-container">
-                        <div id="progress-bar" class="progress-bar"></div>
+                    <div id="progress-container" style="display:none; margin-top:0.5rem; background:rgba(255,255,255,0.05); border-radius:999px; height:6px; overflow:hidden;">
+                        <div id="progress-bar" style="background:linear-gradient(to right, var(--accent-cyan), var(--accent-purple)); height:100%; width:0%; border-radius:999px; transition:width 0.3s ease;"></div>
                     </div>
                 </div>
             </div>
 
             <div class="glass-panel">
-                <h3 class="panel-title">AI Engine Status</h3>
-                <div class="status-box">
-                    <div class="status-item">
-                        <span class="status-label">Engine Version:</span>
-                        <span class="status-value">v1.2.0-IF</span>
+                <h3 id="lbl-soar-title" class="panel-title">SOAR Automation Engine</h3>
+                <div class="control-group">
+                    <div class="toggle-switch-container">
+                        <span id="lbl-soar-mitigate">SOAR Auto-Mitigate</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="soar-toggle" checked onchange="toggleSOAR(this.checked)">
+                            <span class="slider"></span>
+                        </label>
                     </div>
-                    <div class="status-item">
-                        <span class="status-label">Model File:</span>
-                        <span id="status-model" class="status-value yellow">Not Found</span>
+                    <div class="toggle-switch-container" style="border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.05);">
+                        <span id="lbl-live-os" style="color: var(--accent-red); font-weight: 700;">Live OS Execution</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="real-exec-toggle" onchange="toggleRealExecution(this.checked)">
+                            <span class="slider"></span>
+                        </label>
                     </div>
-                    <div class="status-item">
-                        <span class="status-label">System Mode:</span>
-                        <span id="status-mode" class="status-value cyan">Simulating</span>
+                    <button id="lbl-clear-queue" class="btn-mode" onclick="clearXDRIncidents()" style="justify-content: center; margin-top: 0.4rem;">
+                        Clear Incident Queue
+                    </button>
+                </div>
+            </div>
+
+            <div class="glass-panel">
+                <h3 id="lbl-stats-title" class="panel-title">XDR Security Stats</h3>
+                <div style="font-size: 0.82rem; line-height: 1.8;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span id="lbl-quarantine-hosts" style="color: var(--text-muted);">Quarantined Hosts:</span>
+                        <span id="stat-quarantines" style="font-weight: 700; color: var(--accent-red);">0</span>
                     </div>
-                    <div class="status-item" style="border: none;">
-                        <span class="status-label">Scapy Driver:</span>
-                        <span id="status-driver" class="status-value green">Available</span>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span id="lbl-blocked-ips" style="color: var(--text-muted);">Firewall Blocked IPs:</span>
+                        <span id="stat-blocked-ips" style="font-weight: 700; color: var(--accent-yellow);">0</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span id="lbl-soar-actions" style="color: var(--text-muted);">SOAR Auto-Actions:</span>
+                        <span id="stat-auto-actions" style="font-weight: 700; color: var(--accent-green);">0</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span id="lbl-ai-ver" style="color: var(--text-muted);">AI Model Version:</span>
+                        <span style="font-weight: 700; color: var(--accent-cyan);">v2.0-XDR-IF</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Main stats and tables -->
+        <!-- Main Dashboard Content -->
         <div class="dashboard-content">
+            <!-- 4 Stat Cards -->
             <div class="stats-grid">
                 <div class="glass-panel stat-card">
-                    <span class="stat-label">Devices Monitored</span>
-                    <span id="stat-devices" class="stat-value">0</span>
+                    <span id="lbl-stat-incidents" class="stat-label">Correlated Incidents</span>
+                    <span id="stat-total-incidents" class="stat-value">0</span>
                 </div>
                 <div class="glass-panel stat-card">
-                    <span class="stat-label">Total Flow Packets</span>
-                    <span id="stat-packets" class="stat-value">0</span>
+                    <span id="lbl-stat-mitigated" class="stat-label">Threats Mitigated</span>
+                    <span id="stat-threats-mitigated" class="stat-value" style="color: var(--accent-green);">0</span>
                 </div>
                 <div class="glass-panel stat-card">
-                    <span class="stat-label">Alerts Triggered</span>
-                    <span id="stat-alerts" class="stat-value">0</span>
+                    <span id="lbl-stat-quarantines" class="stat-label">Active Quarantines</span>
+                    <span id="stat-active-containments" class="stat-value" style="color: var(--accent-red);">0</span>
                 </div>
                 <div id="threat-panel" class="glass-panel stat-card threat-card">
-                    <span class="stat-label">Threat Condition</span>
+                    <span id="lbl-stat-condition" class="stat-label">Threat Condition</span>
                     <div id="threat-indicator" class="threat-status-large">
                         <span class="pulse-dot"></span> SECURE
                     </div>
                 </div>
             </div>
 
+            <!-- XDR Incidents Table -->
+            <div class="glass-panel">
+                <h3 class="panel-title">
+                    <span id="lbl-incidents-heading">XDR Cross-Vector Incidents</span>
+                    <span id="lbl-incidents-sub" style="font-size: 0.75rem; font-weight: 500; color: var(--text-muted);">Real-Time Threat Correlation</span>
+                </h3>
+                <div class="table-container table-scrollable">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th id="th-id">Incident ID</th>
+                                <th id="th-time">Time</th>
+                                <th id="th-asset">Target Asset</th>
+                                <th id="th-title">Correlated Threat Title</th>
+                                <th id="th-vectors">Vectors</th>
+                                <th id="th-severity">Severity</th>
+                                <th id="th-status">Status</th>
+                                <th id="th-action">Response Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="incidents-table-body">
+                            <tr>
+                                <td colspan="8" class="no-data-msg">Waiting for multi-vector threat stream...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Bottom Data Grid: Telemetry Stream + SOAR Execution Audit Log -->
             <div class="data-section">
-                <!-- Left table: Traffic Flows -->
                 <div class="glass-panel">
-                    <h3 class="panel-title">Active Device Network Flows</h3>
-                    <div class="table-container">
+                    <div class="tab-bar">
+                        <button id="tab-btn-all" class="tab-btn active" onclick="switchTelemetryTab('all', this)">All Telemetry</button>
+                        <button id="tab-btn-net" class="tab-btn" onclick="switchTelemetryTab('network', this)">Network Flows</button>
+                        <button id="tab-btn-ep" class="tab-btn" onclick="switchTelemetryTab('endpoint', this)">Endpoint Events</button>
+                        <button id="tab-btn-id" class="tab-btn" onclick="switchTelemetryTab('identity', this)">Identity Logs</button>
+                    </div>
+                    <div class="table-container" style="max-height: 380px; overflow-y: auto;">
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Device IP</th>
-                                    <th>Packets</th>
-                                    <th>Bytes</th>
-                                    <th class="tooltip" data-tooltip="Average payload size per packet">Avg Packet Size</th>
-                                    <th>Dst Ports</th>
-                                    <th>TCP / UDP</th>
-                                    <th class="tooltip" data-tooltip="Negative score indicates abnormality. Lower = More Anomaly">AI Score (?)</th>
+                                    <th>Vector</th>
+                                    <th>Source / Target</th>
+                                    <th>Details / Activity</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
-                            <tbody id="flows-table-body">
+                            <tbody id="telemetry-table-body">
                                 <tr>
-                                    <td colspan="8" class="no-data-msg">Waiting for traffic data stream...</td>
+                                    <td colspan="4" class="no-data-msg">Streaming unified XDR telemetry...</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                <!-- Right list: Threat log -->
-                <div class="glass-panel alerts-panel">
-                    <h3 class="panel-title">
-                        Security Threat Alerts
-                        <button class="btn-action btn-secondary" style="width: auto; padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="clearAlerts()">Clear</button>
+                <!-- SOAR Execution Audit Log -->
+                <div class="glass-panel logs-panel">
+                    <h3 id="lbl-soar-audit-heading" class="panel-title">
+                        SOAR Execution Audit Log
                     </h3>
-                    <div id="alerts-list" class="alerts-list">
-                        <div class="no-data-msg" style="padding: 2rem;">No security threats logged.</div>
+                    <div id="soar-logs-list" class="logs-list">
+                        <div class="no-data-msg" style="padding: 2rem;">No response actions logged yet.</div>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
+    <!-- Incident RCA Details Modal -->
+    <div id="rca-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <h3 id="modal-title" style="font-family: var(--font-display); font-size: 1.2rem; color: var(--accent-cyan); margin-bottom: 0.75rem;">
+                Incident Root Cause Analysis (RCA)
+            </h3>
+            <div id="modal-body" style="font-size: 0.85rem; line-height: 1.6; color: var(--text-main);">
+                <!-- Modal content loaded dynamically -->
+            </div>
+            <div style="margin-top: 1.25rem; text-align: right;">
+                <button class="btn-xs btn-info" style="padding: 0.5rem 1rem;" onclick="closeModal()">Close Details</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        let isTraining = false;
-        let detectionEnabled = true;
+        let currentTab = 'all';
+        let xdrData = null;
+        let currentLang = localStorage.getItem('xdr_lang') || 'TH';
 
-        async function updateStatus() {
-            try {
-                const response = await fetch('/api/status');
-                const data = await response.json();
-                
-                // Update mode classes
-                document.getElementById('btn-simulate').classList.toggle('active', data.mode === 'simulate');
-                document.getElementById('btn-detect').classList.toggle('active', data.mode === 'detect');
-                
-                document.getElementById('status-mode').innerText = data.mode.toUpperCase();
-                document.getElementById('status-model').innerText = data.model_loaded ? "Loaded" : "Not Found";
-                document.getElementById('status-model').className = data.model_loaded ? "status-value green" : "status-value yellow";
-                
-                document.getElementById('status-driver').innerText = data.scapy_available ? "Available" : "Not Found";
-                document.getElementById('status-driver').className = data.scapy_available ? "status-value green" : "status-value yellow";
-                
-                const liveInd = document.getElementById('live-driver-indicator');
-                if (data.scapy_available) {
-                    liveInd.innerText = "Available";
-                    liveInd.style.color = "var(--accent-green)";
-                } else {
-                    liveInd.innerText = "No Driver";
-                    liveInd.style.color = "var(--accent-yellow)";
-                }
+        const i18n = {
+            TH: {
+                flag: '🇹🇭',
+                langLabel: 'TH | EN',
+                hdrTitle: 'ANTIGRAVITY SHIELD XDR',
+                sysMode: 'โหมดระบบ & AI',
+                pauseDetect: 'หยุดการตรวจจับ',
+                resumeDetect: 'เริ่มการตรวจจับใหม่',
+                simMode: 'โหมดจำลอง',
+                liveMode: 'โหมดตรวจจับจริง',
+                trainAi: 'เทรนโมเดล AI ใหม่',
+                trainingAi: 'กำลังเทรน AI ({p}%)...',
+                soarTitle: 'ระบบตอบสนองภัยอัตโนมัติ (SOAR)',
+                soarMitigate: 'จัดการภัยอัตโนมัติ',
+                liveOsExec: 'รันคำสั่งจริงบนระบบ OS',
+                clearQueue: 'ล้างรายการเหตุการณ์',
+                statsTitle: 'สถิติความปลอดภัย XDR',
+                quarantines: 'โฮสต์ที่ถูกกักกัน:',
+                blockedIps: 'IP ที่ถูกบล็อก:',
+                soarActions: 'การจัดการอัตโนมัติ:',
+                aiVer: 'เวอร์ชันโมเดล AI:',
+                statIncidents: 'เหตุการณ์ที่เชื่อมโยง',
+                statMitigated: 'ภัยคุกคามที่ถูกยับยั้ง',
+                statQuarantines: 'โฮสต์ที่กักกันอยู่',
+                statCondition: 'สถานะภัยคุกคาม',
+                secureBaseline: 'ปลอดภัยปกติ',
+                threatCritical: 'วิกฤต (CRITICAL)',
+                threatHigh: 'เสี่ยงสูง (HIGH)',
+                incidentsTitle: 'เหตุการณ์ภัยคุกคาม XDR ข้าม Vector',
+                realtimeCorr: 'การเชื่อมโยงภัยคุกคาม Real-Time',
+                thId: 'รหัสเหตุการณ์',
+                thTime: 'เวลา',
+                thAsset: 'เครื่องเป้าหมาย',
+                thTitle: 'หัวข้อภัยคุกคาม',
+                thVectors: 'ช่องทาง',
+                thSeverity: 'ความรุนแรง',
+                thStatus: 'สถานะ',
+                thAction: 'การดำเนินการ',
+                tabAll: 'ข้อมูลทั้งหมด',
+                tabNet: 'ทราฟฟิกเครือข่าย',
+                tabEp: 'เหตุการณ์เอนด์พอยท์',
+                tabId: 'บันทึกสิทธิ์ใช้งาน',
+                soarAuditTitle: 'บันทึกการปฏิบัติการอัตโนมัติ SOAR',
+                btnIsolate: 'กักกันโฮสต์',
+                btnRelease: 'ปลดกักกัน',
+                btnRca: 'ดู RCA',
+                btnWhitelist: 'Whitelist',
+                btnUnwhitelist: 'ปลด Whitelist',
+                statusActive: '● รอดำเนินการ',
+                statusContained: '✓ ถูกยับยั้งแล้ว',
+                noIncidents: 'ไม่พบเหตุการณ์ภัยคุกคามในระบบ XDR',
+                noTelemetry: 'ไม่มีข้อมูลในหมวดนี้',
+                noLogs: 'ยังไม่มีประวัติการดำเนินการ'
+            },
+            EN: {
+                flag: '🇬🇧',
+                langLabel: 'EN | TH',
+                hdrTitle: 'ANTIGRAVITY SHIELD XDR',
+                sysMode: 'System & AI Mode',
+                pauseDetect: 'Pause Detection',
+                resumeDetect: 'Resume Detection',
+                simMode: 'Simulation Mode',
+                liveMode: 'Live Detection Mode',
+                trainAi: 'Train AI Baseline',
+                trainingAi: 'Training AI ({p}%)...',
+                soarTitle: 'SOAR Automation Engine',
+                soarMitigate: 'SOAR Auto-Mitigate',
+                liveOsExec: 'Live OS Execution',
+                clearQueue: 'Clear Incident Queue',
+                statsTitle: 'XDR Security Stats',
+                quarantines: 'Quarantined Hosts:',
+                blockedIps: 'Firewall Blocked IPs:',
+                soarActions: 'SOAR Auto-Actions:',
+                aiVer: 'AI Model Version:',
+                statIncidents: 'Correlated Incidents',
+                statMitigated: 'Threats Mitigated',
+                statQuarantines: 'Active Quarantines',
+                statCondition: 'Threat Condition',
+                secureBaseline: 'SECURE BASELINE',
+                threatCritical: 'THREAT CRITICAL',
+                threatHigh: 'THREAT HIGH',
+                incidentsTitle: 'XDR Cross-Vector Incidents',
+                realtimeCorr: 'Real-Time Threat Correlation',
+                thId: 'Incident ID',
+                thTime: 'Time',
+                thAsset: 'Target Asset',
+                thTitle: 'Correlated Threat Title',
+                thVectors: 'Vectors',
+                thSeverity: 'Severity',
+                thStatus: 'Status',
+                thAction: 'Response Action',
+                tabAll: 'All Telemetry',
+                tabNet: 'Network Flows',
+                tabEp: 'Endpoint Events',
+                tabId: 'Identity Logs',
+                soarAuditTitle: 'SOAR Execution Audit Log',
+                btnIsolate: 'Isolate Host',
+                btnRelease: 'Release Host',
+                btnRca: 'View RCA',
+                btnWhitelist: 'Whitelist',
+                btnUnwhitelist: 'Unwhitelist',
+                statusActive: '● ACTIVE',
+                statusContained: '✓ CONTAINED',
+                noIncidents: 'No active security incidents flagged across XDR vectors.',
+                noTelemetry: 'No telemetry events recorded for this vector tab.',
+                noLogs: 'No response actions logged yet.'
+            }
+        };
 
-                // Handle toggle detection button state
-                detectionEnabled = data.detection_enabled;
-                const toggleBtn = document.getElementById('btn-toggle-detect');
-                if (data.detection_enabled) {
-                    toggleBtn.innerText = "Pause Detection";
-                    toggleBtn.className = "btn-action";
-                    toggleBtn.style.background = "linear-gradient(135deg, #ef4444, #b91c1c)";
-                    toggleBtn.style.color = "#ffffff";
-                } else {
-                    toggleBtn.innerText = "Resume Detection";
-                    toggleBtn.className = "btn-action btn-paused";
-                    toggleBtn.style.background = "";
-                    toggleBtn.style.color = "";
-                }
+        function toggleLanguage() {
+            currentLang = currentLang === 'TH' ? 'EN' : 'TH';
+            localStorage.setItem('xdr_lang', currentLang);
+            applyLanguage();
+        }
 
-                // Handle training state
-                if (data.mode === 'train') {
-                    isTraining = true;
-                    document.getElementById('btn-train').innerText = "Training AI...";
-                    document.getElementById('btn-train').disabled = true;
-                    document.getElementById('progress-container').style.display = 'block';
-                    document.getElementById('progress-bar').style.style = `width: ${data.training_progress}%`;
-                    document.getElementById('progress-bar').style.width = data.training_progress + '%';
-                } else {
-                    isTraining = false;
-                    document.getElementById('btn-train').innerText = "Train AI Baseline";
-                    document.getElementById('btn-train').disabled = false;
-                    document.getElementById('progress-container').style.display = 'none';
-                }
+        function applyLanguage() {
+            const t = i18n[currentLang];
+            document.getElementById('lang-flag').innerText = t.flag;
+            document.getElementById('lang-label').innerText = t.langLabel;
+            document.getElementById('lbl-sys-mode').innerText = t.sysMode;
+            document.getElementById('lbl-sim-mode').innerText = t.simMode;
+            document.getElementById('lbl-live-mode').innerText = t.liveMode;
+            document.getElementById('lbl-soar-title').innerText = t.soarTitle;
+            document.getElementById('lbl-soar-mitigate').innerText = t.soarMitigate;
+            document.getElementById('lbl-live-os').innerText = t.liveOsExec;
+            document.getElementById('lbl-clear-queue').innerText = t.clearQueue;
+            document.getElementById('lbl-stats-title').innerText = t.statsTitle;
+            document.getElementById('lbl-quarantine-hosts').innerText = t.quarantines;
+            document.getElementById('lbl-blocked-ips').innerText = t.blockedIps;
+            document.getElementById('lbl-soar-actions').innerText = t.soarActions;
+            document.getElementById('lbl-ai-ver').innerText = t.aiVer;
+            document.getElementById('lbl-stat-incidents').innerText = t.statIncidents;
+            document.getElementById('lbl-stat-mitigated').innerText = t.statMitigated;
+            document.getElementById('lbl-stat-quarantines').innerText = t.statQuarantines;
+            document.getElementById('lbl-stat-condition').innerText = t.statCondition;
+            document.getElementById('lbl-incidents-heading').innerText = t.incidentsTitle;
+            document.getElementById('lbl-incidents-sub').innerText = t.realtimeCorr;
 
-                // If disabled, override status pill immediately
-                if (!detectionEnabled) {
-                    const statusPill = document.getElementById('status-pill');
-                    const statusPillText = document.getElementById('status-pill-text');
-                    const threatPanel = document.getElementById('threat-panel');
-                    const threatIndicator = document.getElementById('threat-indicator');
-                    
-                    statusPill.className = "shield-status-pill paused";
-                    statusPillText.innerText = "MONITORING PAUSED";
-                    threatPanel.classList.remove('threatened');
-                    threatIndicator.innerHTML = `<span class="pulse-dot"></span> IDLE`;
-                }
+            document.getElementById('th-id').innerText = t.thId;
+            document.getElementById('th-time').innerText = t.thTime;
+            document.getElementById('th-asset').innerText = t.thAsset;
+            document.getElementById('th-title').innerText = t.thTitle;
+            document.getElementById('th-vectors').innerText = t.thVectors;
+            document.getElementById('th-severity').innerText = t.thSeverity;
+            document.getElementById('th-status').innerText = t.thStatus;
+            document.getElementById('th-action').innerText = t.thAction;
 
-            } catch (err) {
-                console.error("Error fetching status API", err);
+            document.getElementById('tab-btn-all').innerText = t.tabAll;
+            document.getElementById('tab-btn-net').innerText = t.tabNet;
+            document.getElementById('tab-btn-ep').innerText = t.tabEp;
+            document.getElementById('tab-btn-id').innerText = t.tabId;
+            document.getElementById('lbl-soar-audit-heading').innerText = t.soarAuditTitle;
+
+            if (xdrData) {
+                renderStats(xdrData);
+                renderIncidents(xdrData.incidents, xdrData.quarantined_hosts, xdrData.blocked_ips);
             }
         }
 
-        async function updateFlows() {
+        async function fetchStatus() {
             try {
-                const response = await fetch('/api/flows');
-                const data = await response.json();
+                const res = await fetch('/api/status');
+                const data = await res.json();
+                const t = i18n[currentLang];
                 
-                const tableBody = document.getElementById('flows-table-body');
-                const alertsList = document.getElementById('alerts-list');
+                document.getElementById('btn-simulate').classList.toggle('active', data.mode === 'simulate');
+                document.getElementById('btn-detect').classList.toggle('active', data.mode === 'detect');
                 
-                // Update stats
-                document.getElementById('stat-devices').innerText = detectionEnabled ? data.flows.length : 0;
-                
-                let totalPackets = 0;
-                let hasThreat = false;
-                
-                // Render flows table
-                if (detectionEnabled && data.flows && data.flows.length > 0) {
-                    let html = '';
-                    data.flows.forEach(flow => {
-                        totalPackets += flow.packet_count;
-                        if (flow.is_anomaly) {
-                            hasThreat = true;
-                        }
-                        
-                        const rowClass = flow.is_anomaly ? 'class="anomaly-row"' : '';
-                        const badgeClass = flow.is_anomaly ? 'badge-anomaly' : 'badge-normal';
-                        const badgeText = flow.is_anomaly ? 'Anomaly' : 'Normal';
-                        
-                        // Bytes formatting
-                        let bytesText = flow.byte_count + " B";
-                        if (flow.byte_count > 1000000) {
-                            bytesText = (flow.byte_count / 1000000).toFixed(2) + " MB";
-                        } else if (flow.byte_count > 1000) {
-                            bytesText = (flow.byte_count / 1000).toFixed(1) + " KB";
-                        }
+                const liveInd = document.getElementById('live-driver-indicator');
+                liveInd.innerText = data.scapy_available ? "Available" : "No Driver";
+                liveInd.style.color = data.scapy_available ? "var(--accent-green)" : "var(--accent-yellow)";
 
-                        // Avg Packet Size formatting
-                        const avgSizeText = flow.avg_packet_size.toFixed(1) + " B";
-
-                        // TCP/UDP ratio formatting
-                        const protoSplit = `T:${Math.round(flow.tcp_ratio*100)}% | U:${Math.round(flow.udp_ratio*100)}%`;
-                        
-                        html += `
-                            <tr ${rowClass}>
-                                <td class="ip-address">${flow.ip}</td>
-                                <td>${flow.packet_count}</td>
-                                <td>${bytesText}</td>
-                                <td>${avgSizeText}</td>
-                                <td>${flow.unique_dst_ports}</td>
-                                <td>${protoSplit}</td>
-                                <td><strong>${flow.score >= 0 ? '+' : ''}${flow.score.toFixed(3)}</strong></td>
-                                <td><span class="badge ${badgeClass}">${badgeText}</span></td>
-                            </tr>
-                        `;
-                    });
-                    tableBody.innerHTML = html;
-                } else if (!detectionEnabled) {
-                    tableBody.innerHTML = `<tr><td colspan="8" class="no-data-msg" style="color: var(--text-muted)">Monitoring is paused. Click "Resume Detection" to start.</td></tr>`;
+                const toggleBtn = document.getElementById('btn-toggle-detect');
+                if (data.detection_enabled) {
+                    toggleBtn.innerText = t.pauseDetect;
+                    toggleBtn.style.background = "linear-gradient(135deg, #ef4444, #b91c1c)";
                 } else {
-                    tableBody.innerHTML = `<tr><td colspan="8" class="no-data-msg">No active traffic in window.</td></tr>`;
+                    toggleBtn.innerText = t.resumeDetect;
+                    toggleBtn.style.background = "linear-gradient(135deg, #10b981, #059669)";
                 }
-                
-                document.getElementById('stat-packets').innerText = detectionEnabled ? totalPackets : 0;
-                
-                // Render Alerts Log
-                document.getElementById('stat-alerts').innerText = data.alerts.length;
-                if (data.alerts && data.alerts.length > 0) {
-                    let alertHtml = '';
-                    data.alerts.forEach(alert => {
-                        const isFalseAlarm = alert.type.includes("FALSE ALARM");
-                        const cardClass = isFalseAlarm ? 'alert-card false-alarm' : 'alert-card';
-                        alertHtml += `
-                            <div class="${cardClass}">
-                                <div class="alert-header">
-                                    <span class="alert-type">${alert.type}</span>
-                                    <span class="alert-time">${alert.timestamp}</span>
-                                </div>
-                                <span class="alert-ip">${alert.ip}</span>
-                                <span class="alert-details">${alert.details}</span>
-                                <div class="alert-score">Score: ${alert.score}</div>
-                            </div>
-                        `;
-                    });
-                    alertsList.innerHTML = alertHtml;
+
+                const btnTrain = document.getElementById('btn-train');
+                const progContainer = document.getElementById('progress-container');
+                const progBar = document.getElementById('progress-bar');
+
+                if (data.mode === 'train') {
+                    btnTrain.innerText = t.trainingAi.replace('{p}', data.training_progress);
+                    btnTrain.disabled = true;
+                    btnTrain.style.opacity = '0.6';
+                    progContainer.style.display = 'block';
+                    progBar.style.width = data.training_progress + '%';
                 } else {
-                    alertsList.innerHTML = `<div class="no-data-msg" style="padding: 2rem;">No security threats logged.</div>`;
+                    btnTrain.innerText = t.trainAi;
+                    btnTrain.disabled = false;
+                    btnTrain.style.opacity = '1';
+                    progContainer.style.display = 'none';
+                }
+            } catch (e) {
+                console.error("Status fetch error", e);
+            }
+        }
+
+        async function fetchXDRData() {
+            try {
+                const res = await fetch('/api/xdr/data');
+                xdrData = await res.json();
+                
+                renderStats(xdrData);
+                renderIncidents(xdrData.incidents, xdrData.quarantined_hosts, xdrData.blocked_ips);
+                renderTelemetry(xdrData.telemetry);
+                renderSOARLogs(xdrData.response_logs);
+
+                document.getElementById('soar-toggle').checked = xdrData.soar_enabled;
+                document.getElementById('soar-pill').style.display = xdrData.soar_enabled ? 'flex' : 'none';
+                document.getElementById('real-exec-toggle').checked = xdrData.real_execution_enabled;
+
+            } catch (e) {
+                console.error("XDR fetch error", e);
+            }
+        }
+
+        function renderStats(data) {
+            const stats = data.stats;
+            const t = i18n[currentLang];
+
+            document.getElementById('stat-total-incidents').innerText = stats.total_incidents;
+            document.getElementById('stat-threats-mitigated').innerText = stats.threats_mitigated;
+            document.getElementById('stat-active-containments').innerText = stats.active_quarantines;
+            document.getElementById('stat-quarantines').innerText = stats.active_quarantines;
+            document.getElementById('stat-blocked-ips').innerText = stats.active_blocked_ips;
+            document.getElementById('stat-auto-actions').innerText = stats.auto_actions_taken;
+
+            const threatPanel = document.getElementById('threat-panel');
+            const threatInd = document.getElementById('threat-indicator');
+            const statusPill = document.getElementById('status-pill');
+            const statusPillText = document.getElementById('status-pill-text');
+
+            const hasActiveCritical = data.incidents.some(i => i.status === 'ACTIVE' && i.severity === 'CRITICAL');
+            const hasActiveHigh = data.incidents.some(i => i.status === 'ACTIVE' && i.severity === 'HIGH');
+
+            if (hasActiveCritical) {
+                threatPanel.className = "glass-panel stat-card threat-card threatened";
+                threatInd.innerHTML = `<span class="pulse-dot"></span> ${t.threatCritical}`;
+                statusPill.className = "shield-status-pill threatened";
+                statusPillText.innerText = t.threatCritical;
+            } else if (hasActiveHigh) {
+                threatPanel.className = "glass-panel stat-card threat-card threatened";
+                threatInd.innerHTML = `<span class="pulse-dot"></span> ${t.threatHigh}`;
+                statusPill.className = "shield-status-pill threatened";
+                statusPillText.innerText = t.threatHigh;
+            } else {
+                threatPanel.className = "glass-panel stat-card threat-card";
+                threatInd.innerHTML = `<span class="pulse-dot"></span> ${t.secureBaseline}`;
+                statusPill.className = "shield-status-pill";
+                statusPillText.innerText = t.secureBaseline;
+            }
+        }
+
+        function renderIncidents(incidents, quarantined, blocked) {
+            const tbody = document.getElementById('incidents-table-body');
+            const t = i18n[currentLang];
+
+            if (!incidents || incidents.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="no-data-msg">${t.noIncidents}</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            incidents.forEach(inc => {
+                const isQuarantined = quarantined.includes(inc.ip);
+                
+                let sevClass = 'sev-low';
+                if (inc.severity === 'CRITICAL') sevClass = 'sev-critical';
+                if (inc.severity === 'HIGH') sevClass = 'sev-high';
+                if (inc.severity === 'MEDIUM') sevClass = 'sev-medium';
+
+                let vectorsHtml = inc.vectors.map(v => {
+                    if (v === 'Network') return `<span style="color:var(--accent-cyan); font-weight:700;">NET</span>`;
+                    if (v === 'Endpoint') return `<span style="color:var(--accent-purple); font-weight:700;">EP</span>`;
+                    if (v === 'Identity') return `<span style="color:var(--accent-yellow); font-weight:700;">ID</span>`;
+                    return v;
+                }).join(' + ');
+
+                let statusBadge = `<span style="color:var(--accent-red); font-weight:700;">${t.statusActive}</span>`;
+                if (isQuarantined || inc.status === 'CONTAINED') {
+                    statusBadge = `<span style="color:var(--accent-green); font-weight:700;">${t.statusContained}</span>`;
                 }
 
-                // Update Threat Condition Grid item
-                if (detectionEnabled) {
-                    const threatPanel = document.getElementById('threat-panel');
-                    const threatIndicator = document.getElementById('threat-indicator');
-                    const statusPill = document.getElementById('status-pill');
-                    const statusPillText = document.getElementById('status-pill-text');
-                    
-                    if (hasThreat) {
-                        threatPanel.classList.add('threatened');
-                        threatIndicator.innerHTML = `<span class="pulse-dot"></span> OUTLIER DETECTED`;
-                        statusPill.className = "shield-status-pill threatened";
-                        statusPillText.innerText = "SECURITY ANOMALY FLAGGED";
-                    } else {
-                        threatPanel.classList.remove('threatened');
-                        threatIndicator.innerHTML = `<span class="pulse-dot"></span> SECURE`;
-                        statusPill.className = "shield-status-pill";
-                        statusPillText.innerText = "SECURE BASELINE ACTIVE";
-                    }
+                let actionBtns = '';
+                if (isQuarantined) {
+                    actionBtns += `<button class="btn-xs btn-success" onclick="xdrAction('release_host', '${inc.ip}')">${t.btnRelease}</button> `;
+                } else {
+                    actionBtns += `<button class="btn-xs btn-danger" onclick="xdrAction('isolate_host', '${inc.ip}')">${t.btnIsolate}</button> `;
                 }
 
-            } catch (err) {
-                console.error("Error fetching flows API", err);
+                const isWhitelisted = (xdrData && xdrData.whitelisted_ips || []).includes(inc.ip);
+                if (isWhitelisted) {
+                    actionBtns += `<button class="btn-xs btn-success" onclick="xdrAction('unwhitelist_ip', '${inc.ip}')">${t.btnUnwhitelist}</button> `;
+                } else {
+                    actionBtns += `<button class="btn-xs" style="background:rgba(245,158,11,0.2); color:var(--accent-yellow); border:1px solid rgba(245,158,11,0.3);" onclick="xdrAction('whitelist_ip', '${inc.ip}')">${t.btnWhitelist}</button> `;
+                }
+
+                actionBtns += `<button class="btn-xs btn-info" onclick="openRCA('${inc.id}')">${t.btnRca}</button>`;
+
+                html += `
+                    <tr>
+                        <td style="font-family:monospace; font-weight:700; color:var(--accent-cyan);">${inc.id}</td>
+                        <td style="color:var(--text-muted);">${inc.timestamp}</td>
+                        <td style="font-family:monospace; font-weight:700;">${inc.ip}</td>
+                        <td style="font-weight:600;">${inc.title}</td>
+                        <td>${vectorsHtml}</td>
+                        <td><span class="badge-sev ${sevClass}">${inc.severity}</span></td>
+                        <td>${statusBadge}</td>
+                        <td>${actionBtns}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function renderTelemetry(telemetry) {
+            const tbody = document.getElementById('telemetry-table-body');
+            const t = i18n[currentLang];
+            let events = [];
+
+            if (currentTab === 'all' || currentTab === 'network') {
+                (telemetry.network || []).forEach(n => {
+                    events.push({
+                        time: n.ip,
+                        vector: 'NETWORK',
+                        src: n.ip,
+                        details: `Packets: ${n.packet_count}, Bytes: ${n.byte_count}, AI Score: ${n.score}`,
+                        is_anomaly: n.is_anomaly
+                    });
+                });
+            }
+
+            if (currentTab === 'all' || currentTab === 'endpoint') {
+                (telemetry.endpoint || []).forEach(e => {
+                    events.push({
+                        time: e.timestamp,
+                        vector: 'ENDPOINT',
+                        src: `${e.host} (${e.ip})`,
+                        details: `${e.process_name} (PID: ${e.pid}) - CPU: ${e.cpu}, Mem: ${e.mem}`,
+                        is_anomaly: e.is_anomaly
+                    });
+                });
+            }
+
+            if (currentTab === 'all' || currentTab === 'identity') {
+                (telemetry.identity || []).forEach(i => {
+                    events.push({
+                        time: i.timestamp,
+                        vector: 'IDENTITY',
+                        src: `${i.user} @ ${i.ip}`,
+                        details: `${i.event} via ${i.auth_type}`,
+                        is_anomaly: i.is_anomaly
+                    });
+                });
+            }
+
+            if (events.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="no-data-msg">${t.noTelemetry}</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            events.slice(0, 20).forEach(ev => {
+                let vecColor = 'var(--accent-cyan)';
+                if (ev.vector.includes('ENDPOINT')) vecColor = 'var(--accent-purple)';
+                if (ev.vector.includes('IDENTITY')) vecColor = 'var(--accent-yellow)';
+
+                const statusTag = ev.is_anomaly ? 
+                    `<span style="color:var(--accent-red); font-weight:700;">ANOMALY</span>` : 
+                    `<span style="color:var(--accent-green);">NORMAL</span>`;
+
+                html += `
+                    <tr>
+                        <td style="font-weight:700; color:${vecColor}; font-size:0.75rem;">${ev.vector}</td>
+                        <td style="font-family:monospace; font-weight:600;">${ev.src}</td>
+                        <td style="color:var(--text-muted);">${ev.details}</td>
+                        <td>${statusTag}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function renderSOARLogs(logs) {
+            const list = document.getElementById('soar-logs-list');
+            const t = i18n[currentLang];
+
+            if (!logs || logs.length === 0) {
+                list.innerHTML = `<div class="no-data-msg" style="padding: 2rem;">${t.noLogs}</div>`;
+                return;
+            }
+
+            let html = '';
+            logs.slice(0, 15).forEach(l => {
+                const isAuto = l.trigger.includes('SOAR');
+                const cardClass = isAuto ? 'soar-trigger' : 'manual-action';
+                html += `
+                    <div class="log-card ${cardClass}">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:0.2rem;">
+                            <strong style="color:var(--accent-cyan);">${l.action} -> ${l.target}</strong>
+                            <span style="color:var(--text-muted); font-size:0.7rem;">${l.timestamp}</span>
+                        </div>
+                        <div style="color:var(--text-muted);">${l.details}</div>
+                        <div style="margin-top:0.2rem; font-weight:700; color:var(--accent-green); font-size:0.7rem;">Trigger: ${l.trigger}</div>
+                    </div>
+                `;
+            });
+            list.innerHTML = html;
+        }
+
+        function switchTelemetryTab(tab, btn) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            if (xdrData) renderTelemetry(xdrData.telemetry);
+        }
+
+        async function xdrAction(action, target) {
+            try {
+                await fetch('/api/xdr/response', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ action: action, target: target })
+                });
+                fetchXDRData();
+            } catch (e) {
+                console.error("Action error", e);
+            }
+        }
+
+        async function toggleSOAR(enabled) {
+            try {
+                await fetch('/api/xdr/config', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ soar_enabled: enabled })
+                });
+                fetchXDRData();
+            } catch (e) {
+                console.error("SOAR toggle error", e);
+            }
+        }
+
+        async function toggleRealExecution(enabled) {
+            try {
+                await fetch('/api/xdr/config', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ real_execution_enabled: enabled })
+                });
+                fetchXDRData();
+            } catch (e) {
+                console.error("Real execution toggle error", e);
+            }
+        }
+
+        async function clearXDRIncidents() {
+            try {
+                await fetch('/api/xdr/clear_incidents', { method: 'POST' });
+                fetchXDRData();
+            } catch (e) {
+                console.error("Clear error", e);
             }
         }
 
         async function setMode(mode) {
-            if (isTraining && mode !== 'simulate') return;
-            
             try {
-                const response = await fetch('/api/action', {
+                await fetch('/api/action', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ action: 'set_mode', mode: mode })
                 });
-                const data = await response.json();
-                if (data.status === 'success') {
-                    updateStatus();
-                } else {
-                    alert("Error: " + data.message);
-                }
-            } catch (err) {
-                console.error("Error setting mode", err);
+                fetchStatus();
+                fetchXDRData();
+            } catch (e) {
+                console.error("Set mode error", e);
             }
         }
 
         async function toggleDetection() {
             try {
-                const response = await fetch('/api/action', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'toggle_detection' })
-                });
-                const data = await response.json();
-                if (data.status === 'success') {
-                    updateStatus();
-                    updateFlows();
-                }
-            } catch (err) {
-                console.error("Error toggling detection", err);
-            }
-        }
-
-        async function clearAlerts() {
-            try {
                 await fetch('/api/action', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'clear_alerts' })
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ action: 'toggle_detection' })
                 });
-                updateFlows();
-            } catch (err) {
-                console.error("Error clearing alerts", err);
+                fetchStatus();
+            } catch (e) {
+                console.error("Toggle error", e);
             }
         }
 
-        // Interval loops
-        setInterval(updateStatus, 2000);
-        setInterval(updateFlows, 2000);
+        function openRCA(incidentId) {
+            if (!xdrData || !xdrData.incidents) return;
+            const inc = xdrData.incidents.find(i => i.id === incidentId);
+            if (!inc) return;
 
-        // Initial calls
-        updateStatus();
-        updateFlows();
+            document.getElementById('modal-title').innerText = `Root Cause Analysis: ${inc.id}`;
+            document.getElementById('modal-body').innerHTML = `
+                <p><strong>Target IP:</strong> ${inc.ip}</p>
+                <p><strong>Severity:</strong> <span class="badge-sev ${inc.severity === 'CRITICAL' ? 'sev-critical' : 'sev-high'}">${inc.severity}</span></p>
+                <p><strong>Correlated Vectors:</strong> ${inc.vectors.join(', ')}</p>
+                <hr style="border-color:rgba(255,255,255,0.08); margin: 0.75rem 0;">
+                <p><strong>Root Cause & Evidence:</strong> ${inc.root_cause}</p>
+                <p><strong>Raw Telemetry Trace:</strong> ${inc.raw_details}</p>
+                <hr style="border-color:rgba(255,255,255,0.08); margin: 0.75rem 0;">
+                <p><strong>Recommended SOAR Playbook:</strong> <span style="color:var(--accent-green); font-weight:700;">${inc.playbook}</span></p>
+            `;
+            document.getElementById('rca-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('rca-modal').style.display = 'none';
+        }
+
+        // Initialize language & polling
+        applyLanguage();
+        fetchStatus();
+        fetchXDRData();
+        setInterval(fetchStatus, 3000);
+        setInterval(fetchXDRData, 2000);
     </script>
 </body>
 </html>

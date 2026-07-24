@@ -7,10 +7,20 @@ import pandas as pd
 from datetime import datetime
 from flask import Flask, jsonify, render_template, request
 
-# Import existing logic from traffic_monitor
+# Import existing logic from traffic_monitor and xdr_engine
 from traffic_monitor import AnomalyDetector, LiveTrafficMonitor, generate_synthetic_data, SCAPY_AVAILABLE, FEATURES
+from xdr_engine import XDREngine
 
 app = Flask(__name__)
+app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+
+@app.after_request
+def add_header(response):
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '-1'
+    return response
 
 # Thread-safe global variables
 state_lock = threading.Lock()
@@ -20,6 +30,9 @@ detector = AnomalyDetector()
 detector_loaded = detector.load()  # Try to load existing model
 live_monitor = None
 live_sniffer_thread = None
+
+# Initialize XDR Engine
+xdr_engine = XDREngine()
 
 # Flow history database in memory
 latest_flows = []
@@ -31,12 +44,10 @@ def background_monitor_worker():
     global system_status, latest_flows, alerts_log, current_mode, training_progress, detector_loaded, detection_enabled
     print("[+] Background monitor thread started.")
     
-    # In-memory buffer of training data if in train mode
     training_data_buffer = []
     training_start_time = None
     training_duration = 30  # seconds for GUI demo training
     
-    # Simple simulator loop state
     sim_tick = 0
     
     while True:
@@ -55,29 +66,27 @@ def background_monitor_worker():
                 
             if mode == "simulate":
                 sim_tick += 1
-                system_status = "Monitoring (Simulation Mode)"
+                system_status = "Monitoring (Simulation Mode - XDR Active)"
                 
                 # Normal flows (from 3-6 devices)
                 normal_df = generate_synthetic_data(random.randint(3, 6), "normal")
                 attack_df = pd.DataFrame()
                 
-                # Every 4 ticks, inject a random attack
-                if sim_tick % 4 == 0:
+                # Every 3 ticks, inject a random attack
+                if sim_tick % 3 == 0:
                     attack_type = random.choice(["port_scan", "ddos", "data_exfiltration"])
                     attack_df = generate_synthetic_data(1, attack_type)
                 
                 tick_df = pd.concat([normal_df, attack_df], ignore_index=True)
                 tick_df = tick_df.sample(frac=1).reset_index(drop=True)
                 
-                # Convert DataFrame to a list of dicts with Mock IPs
                 flows_list = []
                 for idx, row in tick_df.iterrows():
                     is_attack = row['label'] != 'normal'
                     if is_attack:
                         ip = f"192.168.1.{random.randint(200, 220)}"
                     else:
-                        # Fixed IPs for standard home devices to make charts look consistent
-                        ip_choices = ["192.168.1.15 (Smart TV)", "192.168.1.24 (My Laptop)", "192.168.1.10 (IP Camera)", "192.168.1.37 (Smart Plug)"]
+                        ip_choices = ["192.168.1.15", "192.168.1.24", "192.168.1.10", "192.168.1.37"]
                         ip = ip_choices[idx % len(ip_choices)]
                         
                     flows_list.append({
@@ -102,7 +111,6 @@ def background_monitor_worker():
                         flow['is_anomaly'] = int(preds[i]) == -1
                         
                         if flow['is_anomaly'] and flow['true_label'] != 'normal':
-                            # Log real attack alert
                             alert = {
                                 'timestamp': datetime.now().strftime("%H:%M:%S"),
                                 'ip': flow['ip'],
@@ -110,11 +118,9 @@ def background_monitor_worker():
                                 'score': flow['score'],
                                 'details': f"Packets: {flow['packet_count']}, Bytes: {flow['byte_count']}, Avg Size: {flow['avg_packet_size']} B"
                             }
-                            # Check if alert already logged recently to prevent duplicates
                             if not any(a['ip'] == alert['ip'] and a['type'] == alert['type'] for a in alerts_log[:3]):
                                 alerts_log.insert(0, alert)
                         elif flow['is_anomaly'] and flow['true_label'] == 'normal':
-                            # False alarm
                             alert = {
                                 'timestamp': datetime.now().strftime("%H:%M:%S"),
                                 'ip': flow['ip'],
@@ -133,6 +139,9 @@ def background_monitor_worker():
                     latest_flows = flows_list
                     if len(alerts_log) > 30:
                         alerts_log = alerts_log[:30]
+
+                # Pass to XDR Engine for Correlation & SOAR Automation
+                xdr_engine.ingest_and_correlate(latest_flows, alerts_log)
                     
             elif mode == "train":
                 if not training_start_time:
@@ -151,7 +160,6 @@ def background_monitor_worker():
                     if not df_features.empty:
                         training_data_buffer.append(df_features)
                 else:
-                    # Simulate training baseline ingestion
                     mock_train = generate_synthetic_data(15, "normal")
                     training_data_buffer.append(mock_train)
                     
@@ -165,12 +173,12 @@ def background_monitor_worker():
                     with state_lock:
                         current_mode = "detect"
                         training_progress = 0
-                        system_status = "Monitoring (Live Mode)"
+                        system_status = "Monitoring (Live Mode - XDR Active)"
                     training_start_time = None
                     print("[+] Training completed and saved model.")
                     
             elif mode == "detect":
-                system_status = "Monitoring (Live Mode)"
+                system_status = "Monitoring (Live Mode - XDR Active)"
                 flows_list = []
                 
                 if SCAPY_AVAILABLE and live_monitor:
@@ -220,12 +228,11 @@ def background_monitor_worker():
                                     'is_anomaly': False
                                 })
                 else:
-                    # Sniffer not available or driver missing: simulate normal live traffic
                     system_status = "Monitoring (Live Mode - No Sniffer Driver)"
                     normal_df = generate_synthetic_data(random.randint(2, 4), "normal")
                     flows_list = []
                     for idx, row in normal_df.iterrows():
-                        ip_choices = ["192.168.1.15 (Smart TV)", "192.168.1.24 (My Laptop)", "192.168.1.10 (IP Camera)"]
+                        ip_choices = ["192.168.1.15", "192.168.1.24", "192.168.1.10"]
                         ip = ip_choices[idx % len(ip_choices)]
                         flows_list.append({
                             'ip': ip,
@@ -244,6 +251,8 @@ def background_monitor_worker():
                     latest_flows = flows_list
                     if len(alerts_log) > 30:
                         alerts_log = alerts_log[:30]
+
+                xdr_engine.ingest_and_correlate(latest_flows, alerts_log)
                     
         except Exception as e:
             print(f"Error in background worker: {e}")
@@ -315,11 +324,67 @@ def trigger_action():
         
     return jsonify({'status': 'error', 'message': 'Unknown action'}), 400
 
+# ==================== XDR API ROUTES ====================
+@app.route('/api/xdr/data')
+def get_xdr_data():
+    return jsonify(xdr_engine.get_dashboard_data())
+
+@app.route('/api/xdr/response', methods=['POST'])
+def trigger_xdr_response():
+    data = request.json or {}
+    action = data.get('action')
+    target = data.get('target')
+    
+    if not action or not target:
+        return jsonify({'status': 'error', 'message': 'Missing action or target'}), 400
+        
+    if action == 'isolate_host':
+        xdr_engine.isolate_host(target, trigger="SOC Manual Action")
+    elif action == 'release_host':
+        xdr_engine.release_host(target)
+    elif action == 'block_ip':
+        xdr_engine.block_ip(target, trigger="SOC Manual Action")
+    elif action == 'unblock_ip':
+        xdr_engine.unblock_ip(target)
+    elif action == 'kill_process':
+        pid = data.get('pid', target)
+        process_name = data.get('process_name', '')
+        xdr_engine.kill_process(pid, process_name, trigger="SOC Manual Action")
+    elif action == 'whitelist_ip':
+        xdr_engine.whitelist_ip(target)
+    elif action == 'unwhitelist_ip':
+        xdr_engine.unwhitelist_ip(target)
+    else:
+        return jsonify({'status': 'error', 'message': 'Unknown action'}), 400
+        
+    return jsonify({'status': 'success', 'data': xdr_engine.get_dashboard_data()})
+
+@app.route('/api/xdr/config', methods=['POST'])
+def update_xdr_config():
+    data = request.json or {}
+    soar_enabled = data.get('soar_enabled')
+    real_execution_enabled = data.get('real_execution_enabled')
+    
+    if soar_enabled is not None:
+        xdr_engine.set_soar_mode(bool(soar_enabled))
+    if real_execution_enabled is not None:
+        xdr_engine.set_real_execution_mode(bool(real_execution_enabled))
+        
+    return jsonify({
+        'status': 'success',
+        'soar_enabled': xdr_engine.store.soar_enabled,
+        'real_execution_enabled': xdr_engine.store.real_execution_enabled
+    })
+
+@app.route('/api/xdr/clear_incidents', methods=['POST'])
+def clear_xdr_incidents():
+    with xdr_engine.store.lock:
+        xdr_engine.store.incidents = []
+    return jsonify({'status': 'success'})
+
 if __name__ == '__main__':
-    # Start the background sniffer/simulator worker thread
     t = threading.Thread(target=background_monitor_worker, daemon=True)
     t.start()
     
-    print("[+] Starting Web GUI on http://127.0.0.1:5000")
-    # Disable flask reloader to avoid running background thread twice
+    print("[+] Starting XDR Web GUI on http://127.0.0.1:5000")
     app.run(host='127.0.0.1', port=5000, debug=False)
