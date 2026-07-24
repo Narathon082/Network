@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANTIGRAVITY SHIELD - AI Network Security Monitor</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #040814;
+            --panel-bg: rgba(13, 20, 38, 0.65);
+            --panel-border: rgba(255, 255, 255, 0.08);
+            --accent-cyan: #06b6d4;
+            --accent-blue: #3b82f6;
+            --accent-red: #ef4444;
+            --accent-yellow: #f59e0b;
+            --accent-green: #10b981;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --font-display: 'Outfit', sans-serif;
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(30, 41, 150, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.1) 0px, transparent 50%),
+                radial-gradient(at 50% 0%, rgba(239, 68, 68, 0.04) 0px, transparent 50%);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-bottom: 2rem;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem 2.5rem;
+            border-bottom: 1px solid var(--panel-border);
+            background: rgba(4, 8, 20, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 2.2rem;
+            height: 2.2rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-family: var(--font-display);
+            color: #040814;
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+        }
+
+        .logo-text {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+            background: linear-gradient(to right, var(--text-main), #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .shield-status-pill {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: var(--accent-green);
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.05);
+        }
+
+        .shield-status-pill.threatened {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: var(--accent-red);
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.15);
+            animation: pulse-border 1.5s infinite;
+        }
+
+        .shield-status-pill.paused {
+            background: rgba(148, 163, 184, 0.1);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            color: var(--text-muted);
+            box-shadow: none;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: currentColor;
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse 1.5s infinite;
+        }
+
+        main {
+            max-width: 1600px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 2rem;
+        }
+
+        /* Glassmorphism Panel base */
+        .glass-panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 1rem;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            height: fit-content;
+        }
+
+        .panel-title {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .btn-mode {
+            width: 100%;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: var(--text-muted);
+            padding: 0.85rem 1rem;
+            border-radius: 0.6rem;
+            cursor: pointer;
+            text-align: left;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .btn-mode:hover {
+            background: rgba(255,255,255,0.06);
+            color: var(--text-main);
+        }
+
+        .btn-mode.active {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(59, 130, 246, 0.15));
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.15);
+        }
+
+        .btn-action {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            border: none;
+            color: #040814;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            cursor: pointer;
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.25);
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
+        }
+
+        .btn-action.btn-paused {
+            background: linear-gradient(135deg, var(--accent-green), #059669);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);
+            color: #ffffff;
+        }
+
+        .btn-action.btn-paused:hover {
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: var(--accent-red);
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(239, 68, 68, 0.2);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.15);
+        }
+
+        .status-box {
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+            padding-bottom: 0.4rem;
+        }
+
+        .status-value {
+            font-weight: 600;
+        }
+
+        .status-value.green { color: var(--accent-green); }
+        .status-value.cyan { color: var(--accent-cyan); }
+        .status-value.yellow { color: var(--accent-yellow); }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-top: 0.5rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 999px;
+            height: 6px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress-bar {
+            background: linear-gradient(to right, var(--accent-cyan), var(--accent-blue));
+            height: 100%;
+            width: 0%;
+            border-radius: 999px;
+            transition: width 0.3s ease;
+        }
+
+        /* Stats Grid */
+        .dashboard-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+
+        .stat-card.threat-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(16, 185, 129, 0.02));
+            border-color: rgba(16, 185, 129, 0.2);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-card.threat-card.threatened {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.02));
+            border-color: rgba(239, 68, 68, 0.3);
+            animation: pulse-panel 2s infinite;
+        }
+
+        .threat-status-large {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--accent-green);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .threatened .threat-status-large {
+            color: var(--accent-red);
+            text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+        }
+
+        /* Data Section Layout */
+        .data-section {
+            display: grid;
+            grid-template-columns: 1.6fr 1fr;
+            gap: 2rem;
+        }
+
+        /* Table Styling */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 0.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.85rem;
+        }
+
+        th {
+            font-family: var(--font-display);
+            font-weight: 600;
+            color: var(--text-muted);
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background: rgba(255,255,255,0.01);
+        }
+
+        tr.anomaly-row td {
+            background: rgba(239, 68, 68, 0.05);
+            border-bottom-color: rgba(239, 68, 68, 0.15);
+        }
+
+        tr.anomaly-row {
+            color: #fca5a5;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-normal {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+        }
+
+        .badge-anomaly {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-red);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.1);
+        }
+
+        .ip-address {
+            font-family: monospace;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* Alert Panel Styling */
+        .alerts-panel {
+            display: flex;
+            flex-direction: column;
+            max-height: 500px;
+        }
+
+        .alerts-list {
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding-right: 0.5rem;
+        }
+
+        .alert-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-left: 4px solid var(--accent-red);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            transition: all 0.2s ease;
+        }
+
+        .alert-card.false-alarm {
+            border-left-color: var(--accent-yellow);
+        }
+
+        .alert-card:hover {
+            background: rgba(255, 255, 255, 0.04);
+            transform: translateX(3px);
+        }
+
+        .alert-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .alert-type {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--accent-red);
+        }
+
+        .false-alarm .alert-type {
+            color: var(--accent-yellow);
+        }
+
+        .alert-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .alert-ip {
+            font-family: monospace;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .alert-details {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .alert-score {
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-align: right;
+            color: var(--accent-red);
+        }
+
+        .no-data-msg {
+            color: var(--text-muted);
+            text-align: center;
+            padding: 3rem;
+            font-size: 0.9rem;
+        }
+
+        /* Scrollbar customizing */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes pulse-border {
+            0% { border-color: rgba(239, 68, 68, 0.2); }
+            50% { border-color: rgba(239, 68, 68, 0.6); box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
+            100% { border-color: rgba(239, 68, 68, 0.2); }
+        }
+
+        @keyframes pulse-panel {
+            0% { box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); }
+            50% { box-shadow: 0 8px 32px 0 rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.4); }
+            100% { box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); }
+        }
+
+        /* Custom tooltips */
+        .tooltip {
+            position: relative;
+            cursor: help;
+        }
+        
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s;
+            z-index: 10;
+        }
+
+        .tooltip:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <div class="logo-icon">AG</div>
+            <div class="logo-text">ANTIGRAVITY SHIELD</div>
+        </div>
+        <div id="status-pill" class="shield-status-pill">
+            <span class="pulse-dot"></span>
+            <span id="status-pill-text">SECURE BASELINE ACTIVE</span>
+        </div>
+    </header>
+
+    <main>
+        <!-- Sidebar controls -->
+        <div class="sidebar">
+            <div class="glass-panel">
+                <h3 class="panel-title">System Controls</h3>
+                <div class="control-group">
+                    <button id="btn-toggle-detect" class="btn-action" style="margin-bottom: 0.5rem; background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff;" onclick="toggleDetection()">
+                        Pause Detection
+                    </button>
+                    <button id="btn-simulate" class="btn-mode active" onclick="setMode('simulate')">
+                        Simulation Mode <span>Active</span>
+                    </button>
+                    <button id="btn-detect" class="btn-mode" onclick="setMode('detect')">
+                        Live Detection Mode <span id="live-driver-indicator">N/A</span>
+                    </button>
+                    <button id="btn-train" class="btn-action" onclick="setMode('train')">
+                        Train AI Baseline
+                    </button>
+                    <div id="progress-container" class="progress-container">
+                        <div id="progress-bar" class="progress-bar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-panel">
+                <h3 class="panel-title">AI Engine Status</h3>
+                <div class="status-box">
+                    <div class="status-item">
+                        <span class="status-label">Engine Version:</span>
+                        <span class="status-value">v1.2.0-IF</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Model File:</span>
+                        <span id="status-model" class="status-value yellow">Not Found</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">System Mode:</span>
+                        <span id="status-mode" class="status-value cyan">Simulating</span>
+                    </div>
+                    <div class="status-item" style="border: none;">
+                        <span class="status-label">Scapy Driver:</span>
+                        <span id="status-driver" class="status-value green">Available</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main stats and tables -->
+        <div class="dashboard-content">
+            <div class="stats-grid">
+                <div class="glass-panel stat-card">
+                    <span class="stat-label">Devices Monitored</span>
+                    <span id="stat-devices" class="stat-value">0</span>
+                </div>
+                <div class="glass-panel stat-card">
+                    <span class="stat-label">Total Flow Packets</span>
+                    <span id="stat-packets" class="stat-value">0</span>
+                </div>
+                <div class="glass-panel stat-card">
+                    <span class="stat-label">Alerts Triggered</span>
+                    <span id="stat-alerts" class="stat-value">0</span>
+                </div>
+                <div id="threat-panel" class="glass-panel stat-card threat-card">
+                    <span class="stat-label">Threat Condition</span>
+                    <div id="threat-indicator" class="threat-status-large">
+                        <span class="pulse-dot"></span> SECURE
+                    </div>
+                </div>
+            </div>
+
+            <div class="data-section">
+                <!-- Left table: Traffic Flows -->
+                <div class="glass-panel">
+                    <h3 class="panel-title">Active Device Network Flows</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Device IP</th>
+                                    <th>Packets</th>
+                                    <th>Bytes</th>
+                                    <th class="tooltip" data-tooltip="Average payload size per packet">Avg Packet Size</th>
+                                    <th>Dst Ports</th>
+                                    <th>TCP / UDP</th>
+                                    <th class="tooltip" data-tooltip="Negative score indicates abnormality. Lower = More Anomaly">AI Score (?)</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="flows-table-body">
+                                <tr>
+                                    <td colspan="8" class="no-data-msg">Waiting for traffic data stream...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Right list: Threat log -->
+                <div class="glass-panel alerts-panel">
+                    <h3 class="panel-title">
+                        Security Threat Alerts
+                        <button class="btn-action btn-secondary" style="width: auto; padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="clearAlerts()">Clear</button>
+                    </h3>
+                    <div id="alerts-list" class="alerts-list">
+                        <div class="no-data-msg" style="padding: 2rem;">No security threats logged.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let isTraining = false;
+        let detectionEnabled = true;
+
+        async function updateStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                
+                // Update mode classes
+                document.getElementById('btn-simulate').classList.toggle('active', data.mode === 'simulate');
+                document.getElementById('btn-detect').classList.toggle('active', data.mode === 'detect');
+                
+                document.getElementById('status-mode').innerText = data.mode.toUpperCase();
+                document.getElementById('status-model').innerText = data.model_loaded ? "Loaded" : "Not Found";
+                document.getElementById('status-model').className = data.model_loaded ? "status-value green" : "status-value yellow";
+                
+                document.getElementById('status-driver').innerText = data.scapy_available ? "Available" : "Not Found";
+                document.getElementById('status-driver').className = data.scapy_available ? "status-value green" : "status-value yellow";
+                
+                const liveInd = document.getElementById('live-driver-indicator');
+                if (data.scapy_available) {
+                    liveInd.innerText = "Available";
+                    liveInd.style.color = "var(--accent-green)";
+                } else {
+                    liveInd.innerText = "No Driver";
+                    liveInd.style.color = "var(--accent-yellow)";
+                }
+
+                // Handle toggle detection button state
+                detectionEnabled = data.detection_enabled;
+                const toggleBtn = document.getElementById('btn-toggle-detect');
+                if (data.detection_enabled) {
+                    toggleBtn.innerText = "Pause Detection";
+                    toggleBtn.className = "btn-action";
+                    toggleBtn.style.background = "linear-gradient(135deg, #ef4444, #b91c1c)";
+                    toggleBtn.style.color = "#ffffff";
+                } else {
+                    toggleBtn.innerText = "Resume Detection";
+                    toggleBtn.className = "btn-action btn-paused";
+                    toggleBtn.style.background = "";
+                    toggleBtn.style.color = "";
+                }
+
+                // Handle training state
+                if (data.mode === 'train') {
+                    isTraining = true;
+                    document.getElementById('btn-train').innerText = "Training AI...";
+                    document.getElementById('btn-train').disabled = true;
+                    document.getElementById('progress-container').style.display = 'block';
+                    document.getElementById('progress-bar').style.style = `width: ${data.training_progress}%`;
+                    document.getElementById('progress-bar').style.width = data.training_progress + '%';
+                } else {
+                    isTraining = false;
+                    document.getElementById('btn-train').innerText = "Train AI Baseline";
+                    document.getElementById('btn-train').disabled = false;
+                    document.getElementById('progress-container').style.display = 'none';
+                }
+
+                // If disabled, override status pill immediately
+                if (!detectionEnabled) {
+                    const statusPill = document.getElementById('status-pill');
+                    const statusPillText = document.getElementById('status-pill-text');
+                    const threatPanel = document.getElementById('threat-panel');
+                    const threatIndicator = document.getElementById('threat-indicator');
+                    
+                    statusPill.className = "shield-status-pill paused";
+                    statusPillText.innerText = "MONITORING PAUSED";
+                    threatPanel.classList.remove('threatened');
+                    threatIndicator.innerHTML = `<span class="pulse-dot"></span> IDLE`;
+                }
+
+            } catch (err) {
+                console.error("Error fetching status API", err);
+            }
+        }
+
+        async function updateFlows() {
+            try {
+                const response = await fetch('/api/flows');
+                const data = await response.json();
+                
+                const tableBody = document.getElementById('flows-table-body');
+                const alertsList = document.getElementById('alerts-list');
+                
+                // Update stats
+                document.getElementById('stat-devices').innerText = detectionEnabled ? data.flows.length : 0;
+                
+                let totalPackets = 0;
+                let hasThreat = false;
+                
+                // Render flows table
+                if (detectionEnabled && data.flows && data.flows.length > 0) {
+                    let html = '';
+                    data.flows.forEach(flow => {
+                        totalPackets += flow.packet_count;
+                        if (flow.is_anomaly) {
+                            hasThreat = true;
+                        }
+                        
+                        const rowClass = flow.is_anomaly ? 'class="anomaly-row"' : '';
+                        const badgeClass = flow.is_anomaly ? 'badge-anomaly' : 'badge-normal';
+                        const badgeText = flow.is_anomaly ? 'Anomaly' : 'Normal';
+                        
+                        // Bytes formatting
+                        let bytesText = flow.byte_count + " B";
+                        if (flow.byte_count > 1000000) {
+                            bytesText = (flow.byte_count / 1000000).toFixed(2) + " MB";
+                        } else if (flow.byte_count > 1000) {
+                            bytesText = (flow.byte_count / 1000).toFixed(1) + " KB";
+                        }
+
+                        // Avg Packet Size formatting
+                        const avgSizeText = flow.avg_packet_size.toFixed(1) + " B";
+
+                        // TCP/UDP ratio formatting
+                        const protoSplit = `T:${Math.round(flow.tcp_ratio*100)}% | U:${Math.round(flow.udp_ratio*100)}%`;
+                        
+                        html += `
+                            <tr ${rowClass}>
+                                <td class="ip-address">${flow.ip}</td>
+                                <td>${flow.packet_count}</td>
+                                <td>${bytesText}</td>
+                                <td>${avgSizeText}</td>
+                                <td>${flow.unique_dst_ports}</td>
+                                <td>${protoSplit}</td>
+                                <td><strong>${flow.score >= 0 ? '+' : ''}${flow.score.toFixed(3)}</strong></td>
+                                <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+                            </tr>
+                        `;
+                    });
+                    tableBody.innerHTML = html;
+                } else if (!detectionEnabled) {
+                    tableBody.innerHTML = `<tr><td colspan="8" class="no-data-msg" style="color: var(--text-muted)">Monitoring is paused. Click "Resume Detection" to start.</td></tr>`;
+                } else {
+                    tableBody.innerHTML = `<tr><td colspan="8" class="no-data-msg">No active traffic in window.</td></tr>`;
+                }
+                
+                document.getElementById('stat-packets').innerText = detectionEnabled ? totalPackets : 0;
+                
+                // Render Alerts Log
+                document.getElementById('stat-alerts').innerText = data.alerts.length;
+                if (data.alerts && data.alerts.length > 0) {
+                    let alertHtml = '';
+                    data.alerts.forEach(alert => {
+                        const isFalseAlarm = alert.type.includes("FALSE ALARM");
+                        const cardClass = isFalseAlarm ? 'alert-card false-alarm' : 'alert-card';
+                        alertHtml += `
+                            <div class="${cardClass}">
+                                <div class="alert-header">
+                                    <span class="alert-type">${alert.type}</span>
+                                    <span class="alert-time">${alert.timestamp}</span>
+                                </div>
+                                <span class="alert-ip">${alert.ip}</span>
+                                <span class="alert-details">${alert.details}</span>
+                                <div class="alert-score">Score: ${alert.score}</div>
+                            </div>
+                        `;
+                    });
+                    alertsList.innerHTML = alertHtml;
+                } else {
+                    alertsList.innerHTML = `<div class="no-data-msg" style="padding: 2rem;">No security threats logged.</div>`;
+                }
+
+                // Update Threat Condition Grid item
+                if (detectionEnabled) {
+                    const threatPanel = document.getElementById('threat-panel');
+                    const threatIndicator = document.getElementById('threat-indicator');
+                    const statusPill = document.getElementById('status-pill');
+                    const statusPillText = document.getElementById('status-pill-text');
+                    
+                    if (hasThreat) {
+                        threatPanel.classList.add('threatened');
+                        threatIndicator.innerHTML = `<span class="pulse-dot"></span> OUTLIER DETECTED`;
+                        statusPill.className = "shield-status-pill threatened";
+                        statusPillText.innerText = "SECURITY ANOMALY FLAGGED";
+                    } else {
+                        threatPanel.classList.remove('threatened');
+                        threatIndicator.innerHTML = `<span class="pulse-dot"></span> SECURE`;
+                        statusPill.className = "shield-status-pill";
+                        statusPillText.innerText = "SECURE BASELINE ACTIVE";
+                    }
+                }
+
+            } catch (err) {
+                console.error("Error fetching flows API", err);
+            }
+        }
+
+        async function setMode(mode) {
+            if (isTraining && mode !== 'simulate') return;
+            
+            try {
+                const response = await fetch('/api/action', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'set_mode', mode: mode })
+                });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    updateStatus();
+                } else {
+                    alert("Error: " + data.message);
+                }
+            } catch (err) {
+                console.error("Error setting mode", err);
+            }
+        }
+
+        async function toggleDetection() {
+            try {
+                const response = await fetch('/api/action', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'toggle_detection' })
+                });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    updateStatus();
+                    updateFlows();
+                }
+            } catch (err) {
+                console.error("Error toggling detection", err);
+            }
+        }
+
+        async function clearAlerts() {
+            try {
+                await fetch('/api/action', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'clear_alerts' })
+                });
+                updateFlows();
+            } catch (err) {
+                console.error("Error clearing alerts", err);
+            }
+        }
+
+        // Interval loops
+        setInterval(updateStatus, 2000);
+        setInterval(updateFlows, 2000);
+
+        // Initial calls
+        updateStatus();
+        updateFlows();
+    </script>
+</body>
+</html>
