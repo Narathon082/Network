@@ -28,6 +28,7 @@ try:
     import pandas as pd
     import numpy as np
     from sklearn.ensemble import IsolationForest, HistGradientBoostingClassifier, RandomForestClassifier
+    from sklearn.tree import DecisionTreeClassifier
     from sklearn.neural_network import MLPRegressor
     from sklearn.preprocessing import StandardScaler
     import joblib
@@ -225,6 +226,9 @@ class HybridEnsembleDetector:
         self.isolation_forest = IsolationForest(contamination=0.03, random_state=42)
         # 3. Supervised Gradient Boosted Classifier (Multi-class Threat Detector)
         self.classifier = HistGradientBoostingClassifier(random_state=42)
+        # Auxiliary models for comparative matrix
+        self.rf_classifier = RandomForestClassifier(random_state=42)
+        self.dt_classifier = DecisionTreeClassifier(max_depth=3, random_state=42)
         self.mse_baseline_threshold = 1.0
 
     def train(self, df):
@@ -251,7 +255,10 @@ class HybridEnsembleDetector:
         y_all = df_all['label']
         
         self.classifier.fit(X_all_scaled, y_all)
+        self.rf_classifier.fit(X_all_scaled, y_all)
+        self.dt_classifier.fit(X_all_scaled, y_all)
         print(f"{Fore.GREEN}[+] Hybrid Ensemble Model (Autoencoder + IF + GBDT) trained successfully.{Fore.RESET}")
+        print(f"{Fore.GREEN}[+] Auxiliary models (Random Forest + Decision Tree) trained successfully.{Fore.RESET}")
 
     def predict(self, df):
         X = df[FEATURES]
@@ -288,12 +295,89 @@ class HybridEnsembleDetector:
         
         return preds, api_scores, clf_preds, clf_probs
 
+    def predict_comparative(self, df):
+        import time
+        X = df[FEATURES]
+        X_scaled = self.scaler.transform(X)
+        n_samples = len(df)
+        
+        # 1. ENSEMBLE
+        t_start = time.perf_counter()
+        X_recon = self.autoencoder.predict(X_scaled)
+        mse = np.mean(np.square(X_scaled - X_recon), axis=1)
+        mse_scores = np.clip(mse / self.mse_baseline_threshold, 0.0, 2.0)
+        
+        if_raw = self.isolation_forest.decision_function(X_scaled)
+        if_scores = np.clip(0.5 - if_raw, 0.0, 1.0)
+        
+        clf_preds = self.classifier.predict(X_scaled)
+        clf_probs = self.classifier.predict_proba(X_scaled)
+        classes = list(self.classifier.classes_)
+        normal_idx = classes.index('normal') if 'normal' in classes else 0
+        
+        normal_probs = clf_probs[:, normal_idx]
+        clf_anomaly_scores = 1.0 - normal_probs
+        
+        fusion_scores = 0.40 * (mse_scores / 2.0) + 0.30 * if_scores + 0.30 * clf_anomaly_scores
+        ens_preds = np.where((clf_preds != 'normal') | (fusion_scores > 0.35), -1, 1)
+        ens_scores = np.where(ens_preds == -1, -fusion_scores, 0.10)
+        t_end = time.perf_counter()
+        ens_latency = (t_end - t_start) * 1000.0 / n_samples if n_samples > 0 else 0.0
+        
+        # 2. RANDOM FOREST
+        t_start = time.perf_counter()
+        rf_preds = self.rf_classifier.predict(X_scaled)
+        rf_probs = self.rf_classifier.predict_proba(X_scaled)
+        rf_classes = list(self.rf_classifier.classes_)
+        rf_normal_idx = rf_classes.index('normal') if 'normal' in rf_classes else 0
+        rf_conf = 1.0 - rf_probs[:, rf_normal_idx]
+        t_end = time.perf_counter()
+        rf_latency = (t_end - t_start) * 1000.0 / n_samples if n_samples > 0 else 0.0
+        
+        # 3. DECISION TREE
+        t_start = time.perf_counter()
+        dt_preds = self.dt_classifier.predict(X_scaled)
+        dt_probs = self.dt_classifier.predict_proba(X_scaled)
+        dt_classes = list(self.dt_classifier.classes_)
+        dt_normal_idx = dt_classes.index('normal') if 'normal' in dt_classes else 0
+        dt_conf = 1.0 - dt_probs[:, dt_normal_idx]
+        t_end = time.perf_counter()
+        dt_latency = (t_end - t_start) * 1000.0 / n_samples if n_samples > 0 else 0.0
+        
+        comparison = []
+        for idx in range(n_samples):
+            ens_conf = float(fusion_scores[idx]) if ens_preds[idx] == -1 else float(clf_anomaly_scores[idx])
+            comparison.append({
+                "ensemble": {
+                    "label": str(clf_preds[idx]),
+                    "confidence": round(ens_conf, 3),
+                    "latency_ms": round(ens_latency, 3),
+                    "is_anomaly": bool(ens_preds[idx] == -1)
+                },
+                "random_forest": {
+                    "label": str(rf_preds[idx]),
+                    "confidence": round(float(rf_conf[idx]), 3),
+                    "latency_ms": round(rf_latency, 3),
+                    "is_anomaly": bool(rf_preds[idx] != 'normal')
+                },
+                "decision_tree": {
+                    "label": str(dt_preds[idx]),
+                    "confidence": round(float(dt_conf[idx]), 3),
+                    "latency_ms": round(dt_latency, 3),
+                    "is_anomaly": bool(dt_preds[idx] != 'normal')
+                }
+            })
+            
+        return ens_preds, ens_scores, clf_preds, clf_probs, comparison
+
     def save(self):
         joblib.dump({
             'scaler': self.scaler,
             'autoencoder': self.autoencoder,
             'isolation_forest': self.isolation_forest,
             'classifier': self.classifier,
+            'rf_classifier': getattr(self, 'rf_classifier', RandomForestClassifier(random_state=42)),
+            'dt_classifier': getattr(self, 'dt_classifier', DecisionTreeClassifier(max_depth=3, random_state=42)),
             'mse_threshold': self.mse_baseline_threshold
         }, self.model_path)
         print(f"{Fore.GREEN}[+] Saved Hybrid Ensemble Model to {self.model_path}{Fore.RESET}")
@@ -305,6 +389,8 @@ class HybridEnsembleDetector:
             self.autoencoder = data['autoencoder']
             self.isolation_forest = data['isolation_forest']
             self.classifier = data['classifier']
+            self.rf_classifier = data.get('rf_classifier', RandomForestClassifier(random_state=42))
+            self.dt_classifier = data.get('dt_classifier', DecisionTreeClassifier(max_depth=3, random_state=42))
             self.mse_baseline_threshold = data.get('mse_threshold', 1.0)
             print(f"{Fore.GREEN}[+] Loaded Hybrid Ensemble Model from {self.model_path}{Fore.RESET}")
             return True

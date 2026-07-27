@@ -1,0 +1,53 @@
+<rules>
+  <!-- Group for Endpoint Process and System Monitoring -->
+  <group name="endpoint">
+    <rule id="100001" level="5">
+      <field name="process_name">powershell.exe</field>
+      <description>PowerShell process executed on Windows agent</description>
+    </rule>
+    <rule id="100002" level="12">
+      <field name="process_name">mimikatz.exe</field>
+      <description>Critical threat: credential dumping tool Mimikatz detected</description>
+    </rule>
+    <rule id="100003" level="9">
+      <field name="cpu" type="float" operator="gt">85.0</field>
+      <description>High CPU usage anomaly detected on agent</description>
+    </rule>
+    <rule id="100004" level="4">
+      <field name="process_name">cmd.exe</field>
+      <description>Command line shell executed on Windows agent</description>
+    </rule>
+  </group>
+
+  <!-- Group for Network IDS anomalies -->
+  <group name="network">
+    <rule id="200001" level="10">
+      <field name="score" type="float" operator="gt">0.80</field>
+      <description>Wazuh IDS: Network flow anomaly score exceeded threshold</description>
+    </rule>
+    <rule id="200002" level="6">
+      <field name="packet_count" type="int" operator="gt">5000</field>
+      <description>High volume packet burst flow detected</description>
+    </rule>
+    <rule id="200003" level="8">
+      <field name="unique_dst_ports" type="int" operator="gt">20</field>
+      <description>Potential port scan scanning activity detected</description>
+    </rule>
+  </group>
+
+  <!-- Group for Identity/Authentication logs -->
+  <group name="identity">
+    <rule id="300001" level="8">
+      <field name="event">failed_login</field>
+      <description>User authentication failure event detected</description>
+    </rule>
+    <rule id="300002" level="13">
+      <field name="event">root_escalation</field>
+      <description>Critical threat: Root/Admin privileges escalation</description>
+    </rule>
+    <rule id="300003" level="7">
+      <field name="auth_type">ssh_key_expired</field>
+      <description>Attempt to authenticate using expired SSH credentials</description>
+    </rule>
+  </group>
+</rules>
